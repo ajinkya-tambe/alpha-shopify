@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import "easymde/dist/easymde.min.css";
+import { Toaster } from "@/components/ui/toaster";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={workSans.variable}>{children}</body>
+      <Toaster />
     </html>
   );
 }
