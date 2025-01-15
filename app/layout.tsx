@@ -61,7 +61,7 @@ const workSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Alpha Shopify",
+  title: "Alpha Startups",
   description: "Pitch, Vote and Grow",
 };
 

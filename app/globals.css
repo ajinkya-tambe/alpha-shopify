@@ -55,13 +55,30 @@
       rgba(251, 232, 67, 0.6) 50.5%,
       transparent 50.5%
     ) !important;
-    background-size: 5% 100%;
+    background-size: 6% 100%;
+    background-position: center;
+    background-repeat: repeat-x;
+  }
+
+  .pattern-for-startup-details {
+    background-image: linear-gradient(
+      to right,
+      transparent 49.5%,
+      rgba(251, 232, 67, 0.2) 49.5%,
+      rgba(251, 232, 67, 0.6) 50.5%,
+      transparent 50.5%
+    ) !important;
+    background-size: 4% 100%;
     background-position: center;
     background-repeat: repeat-x;
   }
 
   .pink_container {
     @apply pattern w-full bg-primary min-h-[530px] flex justify-center items-center flex-col py-10 px-6;
+  }
+
+  .pink_container-for-startup-details {
+    @apply pattern-for-startup-details w-full bg-primary min-h-[530px] flex justify-center items-center flex-col py-10 px-6;
   }
 
   .tag {
