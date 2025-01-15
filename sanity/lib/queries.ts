@@ -40,3 +40,15 @@ defineQuery(`*[_type =="startup" && _id == $id][0]{
 export const STARTUPS_VIEW_QUERY = defineQuery(`*[_type == "startup" && _id == $id][0]{
   _id, views}
   `);
+
+  // export const AUTHOR_BY_GOOGLE_QUERY = defineQuery(`
+  //   *[_type == "author" && googleId == $googleId][0]{
+  //   _id,
+  //   id,
+  //   name,
+  //   username,
+  //   email,
+  //   image, 
+  //   bio} `)
+
+  export const AUTHOR_BY_GOOGLE_QUERY = defineQuery(`*[_type == "author" && googleId == $googleId][0]`);
