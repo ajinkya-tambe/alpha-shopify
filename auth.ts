@@ -71,6 +71,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // console.log("User fetched in JWT callback:", user);
     
         if (user) {
+          token.id = user._id; // Attach the Sanity ID to the token
+        } else {
           token.id = sub; // Fallback to using sub if user is not found in the database
         }
       }
