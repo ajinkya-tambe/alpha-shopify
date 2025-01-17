@@ -23,7 +23,7 @@ const View = async ({ id }: { id: string }) => {
         <Ping />
       </div>
 
-      <p className="view-text">
+      <p className="view-text mb-3">
         <span className="font-black">Views: {totalViews}</span>
       </p>
     </div>

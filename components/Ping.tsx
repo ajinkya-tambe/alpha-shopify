@@ -2,7 +2,7 @@ import React from "react";
 
 const Ping = () => {
   return (
-    <div className="relative">
+    <div className="relative flex item-center justify-center">
       <div className="absolute -left-2 -top-1">
         <span className="flex-size-[11px]">
           <span
