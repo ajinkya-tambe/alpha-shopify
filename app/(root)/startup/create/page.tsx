@@ -6,6 +6,7 @@ import React from "react";
 const Page = async () => {
   const session = await auth();
 
+  console.log("User's ID on create/page.tsx: ", session?.id);
   if (!session) redirect("/");
 
   return (

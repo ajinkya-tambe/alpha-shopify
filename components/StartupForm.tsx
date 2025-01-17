@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import React, { useState, useActionState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import MDEditor from "@uiw/react-md-editor";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { createPitch } from "@/lib/actions";
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pitch, setPitch] = useState("");
-
   const { toast } = useToast();
   const router = useRouter();
 
@@ -27,34 +27,38 @@ const StartupForm = () => {
         link: formData.get("link") as string,
         pitch,
       };
+
       await formSchema.parseAsync(formValues);
-      console.log(formValues);
+      console.log("formValues: ", formValues);
 
-      //   const result = await createIdea(prevState, formData,pitch);
-      //   console.log(result);
+      const result = await createPitch(prevState, formData, pitch);
+      console.log("result: ", result);
 
-      //   if (result.status == "STATUS") {
-      //     toast({
-      //       title: "Success",
-      //       description: "Your startup pitch has been created successfully!",
-      //     });
-      //     router.push(`/startup/${result.id}`);
-      //   }
+      console.log("formData: ", formData);
 
-      //   return result;
+      if (result.status == "SUCCESS") {
+        toast({
+          title: "Success",
+          description: "Your startup pitch has been created successfully",
+        });
+
+        router.push(`/startup/${result._id}`);
+      }
+
+      return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors;
+        const fieldErorrs = error.flatten().fieldErrors;
 
-        setErrors(fieldErrors as unknown as Record<string, string>);
+        setErrors(fieldErorrs as unknown as Record<string, string>);
 
         toast({
           title: "Error",
-          description: "Please fill in all fields an try again",
+          description: "Please check your inputs and try again",
           variant: "destructive",
         });
 
-        return { ...prevState, error: "Validation falied!", status: "ERROR" };
+        return { ...prevState, error: "Validation failed", status: "ERROR" };
       }
 
       toast({
@@ -68,7 +72,6 @@ const StartupForm = () => {
         error: "An unexpected error has occurred",
         status: "ERROR",
       };
-    } finally {
     }
   };
 
@@ -88,7 +91,7 @@ const StartupForm = () => {
           name="title"
           className="startup-form_input"
           required
-          placeholder="Namma Yatri"
+          placeholder="Startup Title"
         />
 
         {errors.title && <p className="startup-form_error">{errors.title}</p>}
@@ -101,9 +104,9 @@ const StartupForm = () => {
         <Textarea
           id="description"
           name="description"
-          className="startup-form_textarea "
+          className="startup-form_textarea"
           required
-          placeholder="Short description of your startup idea"
+          placeholder="Startup Description"
         />
 
         {errors.description && (
@@ -120,7 +123,7 @@ const StartupForm = () => {
           name="category"
           className="startup-form_input"
           required
-          placeholder="Choose a category(Tech, Health, Education, Travel)"
+          placeholder="Startup Category (Tech, Health, Education...)"
         />
 
         {errors.category && (
@@ -130,14 +133,14 @@ const StartupForm = () => {
 
       <div>
         <label htmlFor="link" className="startup-form_label">
-          Image Link
+          Image URL
         </label>
         <Input
           id="link"
           name="link"
           className="startup-form_input"
           required
-          placeholder="Paste a link to your demo or promotional media"
+          placeholder="Startup Image URL"
         />
 
         {errors.link && <p className="startup-form_error">{errors.link}</p>}
@@ -147,6 +150,7 @@ const StartupForm = () => {
         <label htmlFor="pitch" className="startup-form_label">
           Pitch
         </label>
+
         <MDEditor
           value={pitch}
           onChange={(value) => setPitch(value as string)}
@@ -156,7 +160,7 @@ const StartupForm = () => {
           style={{ borderRadius: 20, overflow: "hidden" }}
           textareaProps={{
             placeholder:
-              "Breifly describe your idea and what problem it solves..",
+              "Briefly describe your idea and what problem it solves",
           }}
           previewOptions={{
             disallowedElements: ["style"],

@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, profile }) {
       try {
-        // console.log("Google OAuth Profile:", profile); // Debugging log
+        console.log("Google OAuth Profile:", profile); // Debugging log
 
         // Extract necessary fields from the profile
         const { email, name, picture, sub } = profile;
@@ -20,7 +20,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         // Fetch the existing user from Sanity
-        const existingUser = await client.withConfig({useCdn: false}).fetch(AUTHOR_BY_GOOGLE_QUERY, { googleId: sub });
+        const existingUser = await client.withConfig({useCdn: false}).fetch(AUTHOR_BY_GOOGLE_QUERY, { id: sub });
+        console.log("Existing User: " ,existingUser)
 
         // If the user doesn't exist, create a new one
         if (!existingUser) {
@@ -66,14 +67,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { sub } = profile;
     
         // Fetch the user to get their unique ID
-        const user = await client.withConfig({ useCdn: false }).fetch(AUTHOR_BY_GOOGLE_QUERY, { googleId: sub });
-    
+        const user = await client.withConfig({ useCdn: false }).fetch(AUTHOR_BY_GOOGLE_QUERY, { id: sub });
+        
         // console.log("User fetched in JWT callback:", user);
     
         if (user) {
-          token.id = user._id; // Attach the Sanity ID to the token
+          token.id =  sub ; // Attach the Sanity ID to the token
         } else {
-          token.id = sub; // Fallback to using sub if user is not found in the database
+          token.id =user._id; // Fallback to using sub if user is not found in the database
         }
       }
     

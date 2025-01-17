@@ -5,7 +5,7 @@ import { auth, signIn, signOut } from "@/auth";
 const Navbar = async () => {
   const session = await auth();
   {
-    console.log(session);
+    console.log("\nSession from Navbar: ", session);
   }
 
   return (

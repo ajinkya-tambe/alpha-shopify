@@ -42,7 +42,7 @@ export const STARTUPS_VIEW_QUERY = defineQuery(`*[_type == "startup" && _id == $
   `);
 
   // export const AUTHOR_BY_GOOGLE_QUERY = defineQuery(`
-  //   *[_type == "author" && googleId == $googleId][0]{
+  //   *[_type == "author" && id == $id][0]{
   //   _id,
   //   id,
   //   name,
@@ -51,4 +51,4 @@ export const STARTUPS_VIEW_QUERY = defineQuery(`*[_type == "startup" && _id == $
   //   image, 
   //   bio} `)
 
-  export const AUTHOR_BY_GOOGLE_QUERY = defineQuery(`*[_type == "author" && googleId == $googleId][0]`);
+  export const AUTHOR_BY_GOOGLE_QUERY = defineQuery(`*[_type == "author" && id == $id][0]`);
