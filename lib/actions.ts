@@ -11,6 +11,7 @@ export const createPitch = async (
   pitch: string,
 ) => {
   const session = await auth();
+  
   const userId = session?.id;
   console.log("User's ID from action.ts: ", userId);
   if (!userId) {
