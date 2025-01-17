@@ -1,31 +1,37 @@
-import NextAuth from "next-auth";
+import NextAuth ,{ Session }from "next-auth";
 import Google from "next-auth/providers/google";
 import { AUTHOR_BY_GOOGLE_QUERY } from "./sanity/lib/queries";
 import { client } from "./sanity/lib/client";
 import { writeClient } from "./sanity/lib/write-client";
 
+interface CustomToken {
+  id?: string;
+  sub?: string;
+  [key: string]: unknown; // Allows other fields if needed
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
   callbacks: {
-    async signIn({ user, profile }) {
+    async signIn({ profile }) {
       try {
         console.log("Google OAuth Profile:", profile); // Debugging log
 
         // Extract necessary fields from the profile
-        const { email, name, picture, sub } = profile;
+        // const { email, name, picture, sub } = profile;
 
-        if (!email) {
+        if (!profile?.email) {
           // console.error("No email returned from Google profile");
           return false; // Prevent sign-in without an email
         }
 
         // Fetch the existing user from Sanity
-        const existingUser = await client.withConfig({useCdn: false}).fetch(AUTHOR_BY_GOOGLE_QUERY, { id: sub });
+        const existingUser = await client.withConfig({useCdn: false}).fetch(AUTHOR_BY_GOOGLE_QUERY, { id: profile?.sub });
         console.log("Existing User: " ,existingUser)
 
         // If the user doesn't exist, create a new one
         if (!existingUser) {
-          const baseUsername = name ? name.replace(/\s+/g, "").toLowerCase() : "user";
+          const baseUsername = profile?.name ? profile?.name.replace(/\s+/g, "").toLowerCase() : "user";
           const randomSuffix = Math.floor(Math.random() * 1000); // Add a random number to ensure uniqueness
           const username = `${baseUsername}${randomSuffix}`;
 
@@ -46,11 +52,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           await writeClient.create({
             _type: "author",
-            id: sub, // Use `sub` as the unique identifier for Google users
+            id: profile?.sub, // Use `sub` as the unique identifier for Google users
             username,
-            name: name || "Anonymous",
-            email,
-            image: picture || "", // Optional: use a default image if `picture` is missing
+            name: profile?.name || "Anonymous",
+            email: profile?.email,
+            image: profile?.picture || "", // Optional: use a default image if `picture` is missing
             bio, // You can customize the bio if needed
           });
         }
@@ -83,20 +89,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: CustomToken }) {
       // console.log("Token in Session callback:", token); // Debugging token
-      if (token?.id) {
-        session.id = token.id; // Attach the user ID to the session
-      }
-      else {
-        session.id = token?.sub; // Fallback to using sub if id is not available
-      }
+      session.id = token.id ?? token.sub ?? "unknown-id";
       return session;
     }
   },
 
   session: {
-    jwt: true, // Enable JWT for session management
+    strategy: "jwt", // Correct property for enabling JWT
   },
 
   cookies: {

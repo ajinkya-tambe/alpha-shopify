@@ -1,8 +1,7 @@
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 import UserStartups from "@/components/UserStartups";
 import { client } from "@/sanity/lib/client";
 import { AUTHOR_BY_ID_QUERY } from "@/sanity/lib/queries";
-import { writeClient } from "@/sanity/lib/write-client";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
@@ -12,7 +11,6 @@ export const experimental_ppr = true;
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;
   console.log("id: ", id);
-  const session = await auth();
 
   const user = await client.fetch(AUTHOR_BY_ID_QUERY, { id });
   console.log("UserPage: ", user);
