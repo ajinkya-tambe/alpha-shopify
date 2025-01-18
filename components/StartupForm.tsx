@@ -18,7 +18,16 @@ const StartupForm = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleFormSubmit = async (prevState: any, formData: FormData) => {
+  interface PitchResponse {
+    error: string;
+    status: string;
+    _id?: string; // Optional if the ID is returned only on success
+  }
+
+  const handleFormSubmit = async (
+    prevState: PitchResponse,
+    formData: FormData
+  ) => {
     try {
       const formValues = {
         title: formData.get("title") as string,
@@ -31,7 +40,7 @@ const StartupForm = () => {
       await formSchema.parseAsync(formValues);
       console.log("formValues: ", formValues);
 
-      const result = await createPitch(prevState, formData, pitch);
+      const result = await createPitch(formData, pitch);
       console.log("result: ", result);
 
       console.log("formData: ", formData);
@@ -75,7 +84,7 @@ const StartupForm = () => {
     }
   };
 
-  const [state, formAction, isPending] = useActionState(handleFormSubmit, {
+  const [, formAction, isPending] = useActionState(handleFormSubmit, {
     error: "",
     status: "INITIAL",
   });
